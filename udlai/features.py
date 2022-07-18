@@ -170,6 +170,8 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
 
     You can pass individual coordinates or arrays of the same length.
 
+    https://dev-api.udl.ai/api/v1/docs/public/attributes#tag/features
+
     Parameters
     ----------
     token : str
@@ -302,6 +304,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             for attr in pt["values"]:
                 d[attr["attribute"][index_by]].append(attr["value"])
         else:
+            # TODO: warn about missing data
             for k in d.keys():
                 if k not in ["latitude", "longitude"]:
                     d[k].append(None)
