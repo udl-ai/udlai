@@ -1,0 +1,4 @@
+[report]
+omit =
+    udlai/_version.py
+    udlai/tests/*
