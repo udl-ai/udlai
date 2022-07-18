@@ -71,6 +71,23 @@ def attributes(token):
     -------
     attributes : pandas.DataFrame
         pandas.DataFrame with attributes and their metadata
+
+    Examples
+    --------
+    >>> udlai.attributes(token)
+          id  ... value_formatter.options.multiply
+    0     10  ...                              NaN
+    1     58  ...                              NaN
+    2     60  ...                              NaN
+    3     61  ...                              NaN
+    4     62  ...                              NaN
+    ..   ...  ...                              ...
+    238  284  ...                              NaN
+    239  285  ...                              NaN
+    240  286  ...                              NaN
+    241  287  ...                              NaN
+    242  288  ...                              1.0
+    [243 rows x 31 columns]
     """
 
     # calling the API
@@ -104,6 +121,33 @@ def attribute_detail(token, attribute_id):
     Returns
     -------
     attribute_details : pandas.Series
+
+    Examples
+    --------
+    >>> udlai.attribute_detail(token, 22)
+    id                                                                     22
+    name                                                          obj_compact
+    description             Compactness of object: C=obj_peri²/(4*box_area*π)
+    short_description                                                    None
+    unit                                                                    -
+    tags.id                                                                 4
+    tags.name                                                      Morphology
+    main_tag.id                                                             4
+    main_tag.name                                                  Morphology
+    data_version                                                         None
+    data_last_update                                                     None
+    data_processor                                                        UDL
+    source_provider                                            Swiss Topo TLM
+    source_provider_link    https://www.swisstopo.admin.ch/de/wissen-fakte...
+    coverage_general                                              Switzerland
+    epsg_code                                                            2056
+    min_value                                                        0.960614
+    max_value                                                       24.141694
+    standard_deviation                                               0.893447
+    mean                                                             1.647733
+    year                                                                 2013
+    value_formatter                                                      None
+    dtype: object
     """
 
     # calling the API
@@ -144,6 +188,46 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
     -------
     features : pandas.Series or pandas.DataFrame
         returns Series for a single point or a DataFrame for multiple points
+
+    Examples
+    --------
+    Single point and a sigle attribute:
+
+    >>> udlai.features(token, 47.37, 8.54, 22)
+    22    2.2064113123322
+    Name: (47.37, 8.54), dtype: object
+
+    Single point and multiple attributes, indexed by name
+
+    >>> udlai.features(token, 47.37, 8.54, [10, 11, 22], index_by="name")
+    box_length                 104
+    box_perim                  335
+    obj_compact    2.2064113123322
+    Name: (47.37, 8.54), dtype: object
+
+    Multiple points and a single attribute
+    (the last point is outside of the covered area):
+
+    >>> lats = [47.3769267, 47.3769267, 48.3769267]
+    >>> lons = [8.5497381, 8.5417981, 8.9417981]
+    >>> udlai.features(token, lats, lons, 10)
+        latitude  longitude    10
+    0  47.376927   8.549738   294
+    1  47.376927   8.541798    44
+    2  48.376927   8.941798  None
+
+    Multiple points and a multiple attributes
+    (the last point is outside of the covered area):
+
+    >>> lats = [47.3769267, 47.3769267, 48.3769267]
+    >>> lons = [8.5497381, 8.5417981, 8.9417981]
+    >>> ids = [11, 12, 13, 14, 15, 16, 22]
+    >>> udlai.features(token, lats, lons, ids)
+        latitude  longitude    11    12  ...     14    15    16                22
+    0  47.376927   8.549738  1106   259  ...  86215  1041   166  13.1956982144114
+    1  47.376927   8.541798   259    85  ...   6860   294    47  1.60758471341658
+    2  48.376927   8.941798  None  None  ...   None  None  None              None
+    [3 rows x 9 columns]
 
     """
     multi = pd.api.types.is_list_like(latitude)
