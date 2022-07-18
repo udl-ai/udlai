@@ -6,9 +6,8 @@ API reference
 
 .. currentmodule:: udlai
 
-.. autosummary::
-   :toctree: generated/
+.. autofunction:: attributes
 
-   attributes
-   attribute_detail
-   features
+.. autofunction:: attribute_detail
+
+.. autofunction:: features

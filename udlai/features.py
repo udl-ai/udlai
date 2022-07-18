@@ -28,7 +28,6 @@ Definition of the main API.
 
 """
 
-import json
 import warnings
 from collections import defaultdict
 
