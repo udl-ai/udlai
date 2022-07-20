@@ -52,7 +52,6 @@ def _flatten_dict(d, parent_key="", sep="."):
     return dict(items)
 
 
-# Function attribute GET (Fetch the features list)
 def attributes(token):
     """
     Returns the all of the attributes that user has access to. User is assigned to token
@@ -102,7 +101,6 @@ def attributes(token):
     return pd.DataFrame([_flatten_dict(i) for i in response.json()])
 
 
-# Function attributes GET (Fetch the attributes list)
 def attribute_detail(token, attribute_id):
     """
     Fetch single entity of attribute based on the ID of the attribute provided as a
@@ -263,8 +261,16 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
 
         dict_raw = response.json()
 
+        if "error" in dict_raw:
+            raise ValueError(dict_raw["details"][0])
+
         if not dict_raw["values"]:
-            warnings.warn("no match", stacklevel=1, category=UserWarning)
+            warnings.warn(
+                "The location is not within the udl.ai database. "
+                "Have you passed correct coordinates?",
+                stacklevel=2,
+                category=UserWarning,
+            )
             # TODO: test this
 
         clean = {a["attribute"][index_by]: a["value"] for a in dict_raw["values"]}
@@ -297,6 +303,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
     )
 
     d = defaultdict(list)
+    missing = False
     for pt in response.json()["results"]:
         d["latitude"].append(pt["coordinates"]["latitude"])
         d["longitude"].append(pt["coordinates"]["longitude"])
@@ -304,9 +311,17 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             for attr in pt["values"]:
                 d[attr["attribute"][index_by]].append(attr["value"])
         else:
-            # TODO: warn about missing data
+            missing = True
             for k in d.keys():
                 if k not in ["latitude", "longitude"]:
                     d[k].append(None)
+
+    if missing:
+        warnings.warn(
+            "Some of the locations are not within the udl.ai database. "
+            "Have you passed correct coordinates?",
+            stacklevel=1,
+            category=UserWarning,
+        )
 
     return pd.DataFrame(d)
