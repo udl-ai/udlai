@@ -48,13 +48,13 @@ def test_attributes():
 
 @pytest.mark.parametrize("attr_id", [10, 22, 0])
 def test_attribute_detail(attr_id):
-    r = udlai.attribute_detail(token, attr_id)
-    assert isinstance(r, pd.Series)
     if attr_id != 0:
+        r = udlai.attribute_detail(token, attr_id)
+        assert isinstance(r, pd.Series)
         assert r["id"] == attr_id
     else:
-        assert r["error"] == "NotFound"
-        assert r["status"] == 404
+        with pytest.raises(ValueError, match="NotFound"):
+            udlai.attribute_detail(token, attr_id)
 
 
 class TestFeatures:
@@ -104,3 +104,14 @@ class TestFeatures:
         for c in ["latitude", "longitude", "box_length", "obj_compact"]:
             assert c in r.columns
         assert r["box_length"].notna().sum() == 2
+
+
+def test_error_propagation():
+    with pytest.raises(ValueError, match="AuthenticationFailed"):
+        udlai.attributes("wrong_token")
+
+    with pytest.raises(ValueError, match="AuthenticationFailed"):
+        udlai.attribute_detail("wrong_token", 10)
+
+    with pytest.raises(ValueError, match="AuthenticationFailed"):
+        udlai.features("wrong_token", 47.37, 8.54, 0)

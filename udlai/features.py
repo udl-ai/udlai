@@ -52,6 +52,12 @@ def _flatten_dict(d, parent_key="", sep="."):
     return dict(items)
 
 
+def _propagate_error(response):
+    """propagate error from the API"""
+    r = response.json()
+    raise ValueError(f'{r["error"]}: {r["details"]} [status {r["status"]}]')
+
+
 def attributes(token):
     """
     Returns the all of the attributes that user has access to. User is assigned to token
@@ -97,8 +103,10 @@ def attributes(token):
             "Content-Type": "application/json",
         },
     )
+    if response.status_code == 200:
+        return pd.DataFrame([_flatten_dict(i) for i in response.json()])
 
-    return pd.DataFrame([_flatten_dict(i) for i in response.json()])
+    _propagate_error(response)
 
 
 def attribute_detail(token, attribute_id):
@@ -156,8 +164,10 @@ def attribute_detail(token, attribute_id):
             "Content-Type": "application/json",
         },
     )
+    if response.status_code == 200:
+        return pd.Series(_flatten_dict(response.json()))
 
-    return pd.Series(_flatten_dict(response.json()))
+    _propagate_error(response)
 
 
 def features(token, latitude, longitude, attribute_id, index_by="id"):
@@ -258,24 +268,26 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             },
             json=json_data,
         )
+        if response.status_code == 200:
 
-        dict_raw = response.json()
+            dict_raw = response.json()
 
-        if "error" in dict_raw:
-            raise ValueError(dict_raw["details"][0])
+            if "error" in dict_raw:
+                raise ValueError(dict_raw["details"][0])
 
-        if not dict_raw["values"]:
-            warnings.warn(
-                "The location is not within the udl.ai database. "
-                "Have you passed correct coordinates?",
-                stacklevel=2,
-                category=UserWarning,
-            )
-            # TODO: test this
+            if not dict_raw["values"]:
+                warnings.warn(
+                    "The location is not within the udl.ai database. "
+                    "Have you passed correct coordinates?",
+                    stacklevel=2,
+                    category=UserWarning,
+                )
 
-        clean = {a["attribute"][index_by]: a["value"] for a in dict_raw["values"]}
+            clean = {a["attribute"][index_by]: a["value"] for a in dict_raw["values"]}
 
-        return pd.Series(clean, name=f"({latitude}, {longitude})", dtype=object)
+            return pd.Series(clean, name=f"({latitude}, {longitude})", dtype=object)
+
+        _propagate_error(response)
 
     json_data = {
         "coordinates": [
@@ -302,26 +314,30 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
         json=json_data,
     )
 
-    d = defaultdict(list)
-    missing = False
-    for pt in response.json()["results"]:
-        d["latitude"].append(pt["coordinates"]["latitude"])
-        d["longitude"].append(pt["coordinates"]["longitude"])
-        if pt["values"]:
-            for attr in pt["values"]:
-                d[attr["attribute"][index_by]].append(attr["value"])
-        else:
-            missing = True
-            for k in d.keys():
-                if k not in ["latitude", "longitude"]:
-                    d[k].append(None)
+    if response.status_code == 200:
 
-    if missing:
-        warnings.warn(
-            "Some of the locations are not within the udl.ai database. "
-            "Have you passed correct coordinates?",
-            stacklevel=1,
-            category=UserWarning,
-        )
+        d = defaultdict(list)
+        missing = False
+        for pt in response.json()["results"]:
+            d["latitude"].append(pt["coordinates"]["latitude"])
+            d["longitude"].append(pt["coordinates"]["longitude"])
+            if pt["values"]:
+                for attr in pt["values"]:
+                    d[attr["attribute"][index_by]].append(attr["value"])
+            else:
+                missing = True
+                for k in d.keys():
+                    if k not in ["latitude", "longitude"]:
+                        d[k].append(None)
 
-    return pd.DataFrame(d)
+        if missing:
+            warnings.warn(
+                "Some of the locations are not within the udl.ai database. "
+                "Have you passed correct coordinates?",
+                stacklevel=1,
+                category=UserWarning,
+            )
+
+        return pd.DataFrame(d)
+
+    _propagate_error(response)
