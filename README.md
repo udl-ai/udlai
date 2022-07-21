@@ -34,19 +34,20 @@ Get a list of all of the attributes the user has access to, completed with their
 
 ```py
 >>> udlai.attributes(token)
-      id  ... value_formatter.options.multiply
-0     10  ...                              NaN
-1     58  ...                              NaN
-2     60  ...                              NaN
-3     61  ...                              NaN
-4     62  ...                              NaN
-..   ...  ...                              ...
-238  284  ...                              NaN
-239  285  ...                              NaN
-240  286  ...                              NaN
-241  287  ...                              NaN
-242  288  ...                              1.0
-[243 rows x 31 columns]
+      id                       name  ...  year value_formatter
+0      1       Buildings floorspace  ...  2013            None
+1      2        Buildings footprint  ...  2013            None
+2      3                     Height  ...  2013            None
+3      4                    Stories  ...  2013            None
+4      9                   box_area  ...  2013            None
+..   ...                        ...  ...   ...             ...
+234  283             usefit_ind_old  ...     0            None
+235  288  Distance secondary school  ...  None            None
+236  294            Price 2 bedroom  ...  None            None
+237  295            Price 3 bedroom  ...  None            None
+238  296           Price 4 bedrooms  ...  None            None
+
+[239 rows x 22 columns]
 ```
 
 #### Fetch specific feature details

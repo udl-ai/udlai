@@ -13,6 +13,7 @@ setuptools.setup(
     description="UDL.AI Python interface",
     install_requires=["numpy", "pandas"],
     long_description=long_description,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     packages=setuptools.find_packages(include=["udlai", "udlai.*"]),
     url="https://github.com/udl-ai/udlai",

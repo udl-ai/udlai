@@ -1,5 +1,5 @@
 """
-Copyright 20172 UrbanDataLab AG
+Copyright 2022 UrbanDataLab AG
 
 MIT License
 
@@ -20,7 +20,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 20172
+Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 
 ---
 
@@ -72,7 +72,7 @@ class TestFeatures:
 
     def test_location_empty(self):
         with pytest.warns(UserWarning, match="The location is not within the udl.ai"):
-            r = udlai.features(token, 47.37, 113.54, 113)
+            r = udlai.features(token, 47.37, 10.54, 113)
             assert r.empty
 
     def test_more_attributes(self):
