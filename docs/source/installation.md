@@ -17,7 +17,7 @@ mamba install -c conda-forge udlai
 ## From git
 
 ```sh
-pip install git+https://github.com/udl_ai/udlai.git
+pip install git+https://github.com/udl-ai/udlai.git
 ```
 
 ## From source
