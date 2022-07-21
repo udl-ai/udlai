@@ -1,5 +1,5 @@
 """
-Copyright 2022 UrbanDataLab AG
+Copyright 20172 UrbanDataLab AG
 
 MIT License
 
@@ -20,7 +20,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRA
 OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
+Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 20172
 
 ---
 
@@ -43,10 +43,10 @@ def test_attributes():
     assert isinstance(df, pd.DataFrame)
     assert not df["id"].isna().any()
     assert df.shape[0] > 200
-    assert df.shape[1] > 30
+    assert df.shape[1] > 20
 
 
-@pytest.mark.parametrize("attr_id", [10, 22, 0])
+@pytest.mark.parametrize("attr_id", [113, 172, 0])
 def test_attribute_detail(attr_id):
     if attr_id != 0:
         r = udlai.attribute_detail(token, attr_id)
@@ -58,7 +58,7 @@ def test_attribute_detail(attr_id):
 
 
 class TestFeatures:
-    @pytest.mark.parametrize("attr_id", [10, 22])
+    @pytest.mark.parametrize("attr_id", [113, 172])
     def test_single(self, attr_id):
         r = udlai.features(token, 47.37, 8.54, attr_id)
         assert isinstance(r, pd.Series)
@@ -72,38 +72,38 @@ class TestFeatures:
 
     def test_location_empty(self):
         with pytest.warns(UserWarning, match="The location is not within the udl.ai"):
-            r = udlai.features(token, 47.37, 10.54, 10)
+            r = udlai.features(token, 47.37, 113.54, 113)
             assert r.empty
 
     def test_more_attributes(self):
-        r = udlai.features(token, 47.37, 8.54, [10, 22], index_by="name")
+        r = udlai.features(token, 47.37, 8.54, [113, 172], index_by="name")
         assert isinstance(r, pd.Series)
-        assert "box_length" in r.index
-        assert "obj_compact" in r.index
+        assert "net_betw_speed" in r.index
+        assert "freiz_300" in r.index
         assert r.shape == (2,)
-        assert not pd.isna(10)
+        assert not pd.isna(113)
 
     def test_multi(self):
         lats = [47.3769267, 47.3769267, 48.3769267]
         lons = [8.5497381, 8.5417981, 8.9417981]
         with pytest.warns(UserWarning, match="Some of the locations are not within"):
-            r = udlai.features(token, lats, lons, 10)
+            r = udlai.features(token, lats, lons, 113)
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (3, 3)
-        for c in ["latitude", "longitude", 10]:
+        for c in ["latitude", "longitude", 113]:
             assert c in r.columns
-        assert r[10].notna().sum() == 2
+        assert r[113].notna().sum() == 2
 
     def test_multi_attr(self):
         lats = [47.3769267, 47.3769267, 48.3769267]
         lons = [8.5497381, 8.5417981, 8.9417981]
         with pytest.warns(UserWarning, match="Some of the locations are not within"):
-            r = udlai.features(token, lats, lons, [10, 22], index_by="name")
+            r = udlai.features(token, lats, lons, [113, 172], index_by="name")
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (3, 4)
-        for c in ["latitude", "longitude", "box_length", "obj_compact"]:
+        for c in ["latitude", "longitude", "net_betw_speed", "freiz_300"]:
             assert c in r.columns
-        assert r["box_length"].notna().sum() == 2
+        assert r["net_betw_speed"].notna().sum() == 2
 
 
 def test_error_propagation():
@@ -111,7 +111,7 @@ def test_error_propagation():
         udlai.attributes("wrong_token")
 
     with pytest.raises(ValueError, match="AuthenticationFailed"):
-        udlai.attribute_detail("wrong_token", 10)
+        udlai.attribute_detail("wrong_token", 113)
 
     with pytest.raises(ValueError, match="AuthenticationFailed"):
         udlai.features("wrong_token", 47.37, 8.54, 0)

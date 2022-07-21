@@ -34,7 +34,7 @@ from collections import defaultdict
 import pandas as pd
 import requests
 
-API_URL = "https://dev-api.udl.ai/api/v1/public"
+API_URL = "https://api.udl.ai/api/v1/public"
 
 
 def _flatten_dict(d, parent_key="", sep="."):
