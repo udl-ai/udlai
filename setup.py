@@ -11,7 +11,7 @@ setuptools.setup(
     author_email="m.fleischmann@urbandatalab.net",
     python_requires=">=3.8",
     description="UDL.AI Python interface",
-    install_requires=["numpy", "pandas"],
+    install_requires=["requests", "pandas"],
     long_description=long_description,
     long_description_content_type="text/markdown",
     include_package_data=True,
