@@ -1,6 +1,6 @@
 # UDL.AI Python API
 
-`udlai` is a way of interacting with the UDL.AI platform for location intelligence using a conveninent Python API.
+`udlai` is a way of interacting with the UDL.AI platform for location intelligence using a convenient Python API.
 
 Note, that to use the `udlai`, you will need to obtain an access token. See [udl.ai](https://udl.ai) for details.
 
