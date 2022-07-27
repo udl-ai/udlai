@@ -35,7 +35,7 @@ import pytest
 
 import udlai
 
-token = os.environ["TOKEN"]
+token = os.environ.get("TOKEN")
 
 
 def test_attributes():
