@@ -73,7 +73,7 @@ Now you can make your changes locally.
 Once ready, run the complete unit tests.
 
 ```sh
-pytest -v udlai --cov=udl_test --cov-fail-under=95 --cov-report term-missing
+pytest -v udlai --cov=udlai --cov-fail-under=95 --cov-report term-missing
 ```
 
 The command will also report code coverage and fail if it is under 95%.
