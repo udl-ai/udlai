@@ -110,5 +110,5 @@ quickstart
 api
 contributing
 changelog
-Repository <https://github.org/udl-ai/udlai>
+Repository <https://github.com/udl-ai/udlai>
 ```
