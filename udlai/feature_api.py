@@ -27,7 +27,6 @@ Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 Definition of the main API.
 
 """
-
 import warnings
 from collections import defaultdict
 
@@ -54,8 +53,13 @@ def _flatten_dict(d, parent_key="", sep="."):
 
 def _propagate_error(response):
     """propagate error from the API"""
-    r = response.json()
-    raise ValueError(f'{r["error"]}: {r["details"]} [status {r["status"]}]')
+    from requests.exceptions import JSONDecodeError
+
+    try:
+        r = response.json()
+        raise ValueError(f'{r["error"]}: {r["details"]} [status {r["status"]}]')
+    except JSONDecodeError:
+        raise ValueError(response.text)
 
 
 def attributes(token):
@@ -65,7 +69,7 @@ def attributes(token):
     would like to have access to other attributes, please contact UDL.
 
     See the documentation of the underlying REST API
-    https://dev-api.udl.ai/api/v1/docs/public/attributes#operation/attributes_list
+    https://api.udl.ai/api/v1/docs/public/attributes#operation/attributes_list
 
     Parameters
     ----------
@@ -115,7 +119,7 @@ def attribute_detail(token, attribute_id):
     parameter.
 
     See the documentation of the underlying REST API
-    https://dev-api.udl.ai/api/v1/docs/public/attributes#operation/attributes_read
+    https://api.udl.ai/api/v1/docs/public/attributes#operation/attributes_read
 
     Parameters
     ----------
@@ -178,7 +182,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
 
     You can pass individual coordinates or arrays of the same length.
 
-    https://dev-api.udl.ai/api/v1/docs/public/attributes#tag/features
+    https://api.udl.ai/api/v1/docs/public/attributes#tag/features
 
     Parameters
     ----------
@@ -201,7 +205,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
 
     Examples
     --------
-    Single point and a sigle attribute:
+    Single point and a single attribute:
 
     >>> udlai.features(token, 47.37, 8.54, 22)
     22    2.2064113123322
@@ -339,5 +343,112 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             )
 
         return pd.DataFrame(d)
+
+    _propagate_error(response)
+
+
+def aggregates(token, geometry, attribute_id, index_by="id"):
+    """
+    An API Endpoint that will return the aggregates for provided
+    geometry. The API expects the attribute IDs, that can be fetched using
+    ``udlai.attributes`` function.
+
+    You can pass a GeoJSON-encoded Polygon or MultiPolygon or a shapely.geometry.
+
+    https://api.udl.ai/api/v1/docs/public/attributes#tag/aggregates
+
+    Parameters
+    ----------
+    token : str
+        API token assigned to a user
+    geometry : GeoJSON-like dict or shapely.geometry
+        Polygon or MultiPolygon geometry denoting the area of interest
+    attribute_id : int or list-like
+        ID(s) of the queried attribute. Use ``udlai.attributes`` to get a list of IDs.
+    index_by : {"id", "name"}
+        One of the ``{"id", "name"}`` denoting whether the output should be indexed
+        using the original attribute ID or its name
+
+    Returns
+    -------
+    aggregates : pandas.DataFrame
+
+    Examples
+    --------
+    Shapely geometry and a single attribute.
+
+    >>> udlai.aggregates(token, shapely_geom, 10)
+        max       mean  median   min        std      sum
+    10  135.0  94.313869    94.0  19.0  30.600546  12921.0
+
+    Shapely geometry and a single attribute indexed by its name.
+
+    >>> udlai.aggregates(token, shapely_geom, 10, index_by="name")
+                  max       mean  median   min        std      sum
+    box_length  135.0  94.313869    94.0  19.0  30.600546  12921.0
+
+    Shapely geometry and a mutliple attributes indexed by their ID.
+
+    >>> udlai.aggregates(token, shapely_geom, [10, 12])
+            sum       mean  median   min    max        std
+    10  12921.0  94.313869    94.0  19.0  135.0  30.600546
+    12  13118.0  95.751825   100.0  29.0  142.0  30.870646
+
+    Shapely geometry and a mutliple attributes indexed by their names.
+
+    >>> udlai.aggregates(token, shapely_geom, [10, 12], index_by='name')
+                    sum       mean  median   min    max        std
+    box_length  12921.0  94.313869    94.0  19.0  135.0  30.600546
+    box_width   13118.0  95.751825   100.0  29.0  142.0  30.870646
+
+    GeoJSON-encoded geometry:
+
+    >>> geojson = {
+    ...     "type": "Polygon",
+    ...     "coordinates": [
+    ...         [
+    ...             [8.5367, 47.3712],
+    ...             [8.5406, 47.3712],
+    ...             [8.5406, 47.3739],
+    ...             [8.5367, 47.3739],
+    ...             [8.5367, 47.3712],
+    ...         ]
+    ...     ],
+    ... }
+    >>> udlai.aggregates(token, geojson, 10)
+        max       mean  median   min        std      sum
+    10  135.0  94.268966    94.0  19.0  30.613916  13669.0
+    """
+    if not isinstance(geometry, dict):
+        geometry = geometry.__geo_interface__  # shapely.geometry to geojson
+
+    if not isinstance(attribute_id, list):
+        attribute_id = [attribute_id]
+
+    json_data = {
+        "geometry": geometry,
+        "attributes": [
+            {
+                "id": x,
+            }
+            for x in attribute_id
+        ],
+    }
+
+    response = requests.post(
+        f"{API_URL}/aggregates/",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        json=json_data,
+    )
+
+    if response.status_code == 200:
+        d = {}
+        for att in response.json()["results"]:
+            d[att["attribute"][index_by]] = att["aggregates"]
+
+        return pd.DataFrame(d).astype(float).T
 
     _propagate_error(response)
