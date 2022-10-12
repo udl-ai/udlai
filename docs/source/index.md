@@ -93,6 +93,17 @@ obj_compact    2.2064113123322
 Name: (47.37, 8.54), dtype: object
 ```
 
+#### Fetch a summary over an area of interest
+
+Get the summary statistics of an attribute within a specific area.
+
+```py
+>>> udlai.aggregates(token, shapely_geom, [10, 12], index_by='name')
+                  sum       mean  median   min    max        std
+box_length  12921.0  94.313869    94.0  19.0  135.0  30.600546
+box_width   13118.0  95.751825   100.0  29.0  142.0  30.870646
+```
+
 ## Contact person
 
 **Martin Fleischmann** (@martinfleis)

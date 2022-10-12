@@ -29,7 +29,7 @@ Top-level package for UDL.AI Python API.
 """
 
 from ._version import get_versions
-from .features import *  # noqa
+from .feature_api import *  # noqa
 
 __author__ = """Martin Fleischmann"""
 __email__ = "m.fleischmann@urbandatalab.net"

@@ -15,3 +15,5 @@ Feature API
 .. autofunction:: attribute_detail
 
 .. autofunction:: features
+
+.. autofunction:: aggregates
