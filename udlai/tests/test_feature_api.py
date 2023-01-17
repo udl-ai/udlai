@@ -37,6 +37,7 @@ from shapely.geometry import shape
 import udlai
 
 token = os.environ.get("TOKEN")
+token = "6a617a9a72f1babaeb0451950633a39974a77019"
 
 
 def test_attributes():
@@ -124,45 +125,45 @@ class TestAggregate:
         self.shapely_geom = shape(self.geojson)
 
     def test_single_shapely(self):
-        r = udlai.aggregates(token, self.shapely_geom, 10)
+        r = udlai.aggregates(token, self.shapely_geom, 113)
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (1, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc[10].notna().sum() == 6
+        assert r.loc[113].notna().sum() == 6
 
     def test_single_shapely_name(self):
-        r = udlai.aggregates(token, self.shapely_geom, 10, index_by="name")
+        r = udlai.aggregates(token, self.shapely_geom, 113, index_by="name")
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (1, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc["box_length"].notna().sum() == 6
+        assert r.loc["Betweeness using speed"].notna().sum() == 6
 
     def test_multi_shapely(self):
-        r = udlai.aggregates(token, self.shapely_geom, [10, 12])
+        r = udlai.aggregates(token, self.shapely_geom, [113, 172])
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (2, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc[10].notna().sum() == 6
+        assert r.loc[113].notna().sum() == 6
 
     def test_multi_shapely_name(self):
-        r = udlai.aggregates(token, self.shapely_geom, [10, 12], index_by="name")
+        r = udlai.aggregates(token, self.shapely_geom, [113, 172], index_by="name")
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (2, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc["box_length"].notna().sum() == 6
-        assert r.loc["box_width"].notna().sum() == 6
+        assert r.loc["Betweeness using speed"].notna().sum() == 6
+        assert r.loc["Leisure activties in 300m"].notna().sum() == 6
 
     def test_single_geojson(self):
-        r = udlai.aggregates(token, self.geojson, 10)
+        r = udlai.aggregates(token, self.geojson, 113)
         assert isinstance(r, pd.DataFrame)
         assert r.shape == (1, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc[10].notna().sum() == 6
+        assert r.loc[113].notna().sum() == 6
 
 
 def test_error_propagation():
