@@ -138,7 +138,7 @@ class TestAggregate:
         assert r.shape == (1, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc["Betweeness using speed"].notna().sum() == 6
+        assert r.loc["net_betw_speed"].notna().sum() == 6
 
     def test_multi_shapely(self):
         r = udlai.aggregates(token, self.shapely_geom, [113, 172])
@@ -154,8 +154,8 @@ class TestAggregate:
         assert r.shape == (2, 6)
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
-        assert r.loc["Betweeness using speed"].notna().sum() == 6
-        assert r.loc["Leisure activties in 300m"].notna().sum() == 6
+        assert r.loc["net_betw_speed"].notna().sum() == 6
+        assert r.loc["freiz_300"].notna().sum() == 6
 
     def test_single_geojson(self):
         r = udlai.aggregates(token, self.geojson, 113)
