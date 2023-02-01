@@ -155,7 +155,7 @@ class TestAggregate:
         for c in ["max", "mean", "median", "min", "std", "sum"]:
             assert c in r.columns
         assert r.loc["net_betw_speed"].notna().sum() == 6
-        assert r.loc["Leisure activties in 300m"].notna().sum() == 6
+        assert r.loc["freiz_300"].notna().sum() == 6
 
     def test_single_geojson(self):
         r = udlai.aggregates(token, self.geojson, 113)
