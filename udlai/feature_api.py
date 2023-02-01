@@ -347,7 +347,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
     _propagate_error(response)
 
 
-def aggregates(token, geometry, attribute_id, index_by="id"):
+def aggregates(token, geometry, attribute_id, index_by="id", grid_size=25):
     """
     An API Endpoint that will return the aggregates for provided
     geometry. The API expects the attribute IDs, that can be fetched using
@@ -368,6 +368,8 @@ def aggregates(token, geometry, attribute_id, index_by="id"):
     index_by : {"id", "name"}
         One of the ``{"id", "name"}`` denoting whether the output should be indexed
         using the original attribute ID or its name
+    grid_size : {25, 75, 225, 675}
+        Size of the grid to be queried.
 
     Returns
     -------
@@ -433,6 +435,7 @@ def aggregates(token, geometry, attribute_id, index_by="id"):
             }
             for x in attribute_id
         ],
+        "grid_size": f"grid{grid_size}",
     }
 
     response = requests.post(
