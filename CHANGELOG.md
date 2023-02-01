@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0 (2023-02-01)
+
+Exposed grid_size in aggregation API
+
 ## 0.2.0 (2023-01-17)
 
 Added Aggregation API.
