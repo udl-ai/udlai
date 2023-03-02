@@ -24,15 +24,47 @@ Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 
 ---
 
-Top-level package for UDL.AI Python API.
+Unit tests for UDL.AI Python API.
 
 """
+import os
 
-from ._version import get_versions
-from .feature_api import *  # noqa
-from .geocoding_api import *  # noqa
+import pandas as pd
+import numpy as np
 
-__author__ = """Martin Fleischmann"""
-__email__ = "m.fleischmann@urbandatalab.net"
-__version__ = get_versions()["version"]
-del get_versions
+import udlai
+
+token = os.environ.get("TOKEN")
+token = "6a617a9a72f1babaeb0451950633a39974a77019"
+
+
+def test_geocode_structured():
+    df = pd.DataFrame(
+        {
+            "street": {0: "Bielstrasse", 1: "Quellenstrasse"},
+            "number": {0: "49", 1: "5"},
+            "postcode": {0: 3273, 1: 9240},
+            "town": {0: "Kappelen", 1: "Uzwil"},
+        }
+    )
+    r = udlai.geocode_structured(token, df)
+    assert r.shape == (2, 7)
+    assert np.all(
+        r.columns
+        == ["street", "number", "postcode", "town", "latitude", "longitude", "score"]
+    )
+    assert not r.isna().any().any()
+
+
+def test_geocode_unstructured():
+    addresses = [
+        "Klosbachstrasse 67, 8032 Zürich",
+        "Dorfstrasse 40, 3184 Wünnewil-Flamatt, Switzerland",
+    ]
+    r = udlai.geocode_unstructured(token, addresses)
+    assert r.shape == (2, 7)
+    assert np.all(
+        r.columns
+        == ["street", "number", "postcode", "town", "latitude", "longitude", "score"]
+    )
+    assert not r.isna().any().any()

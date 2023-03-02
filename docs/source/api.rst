@@ -17,3 +17,11 @@ Feature API
 .. autofunction:: features
 
 .. autofunction:: aggregates
+
+
+Geocoding API
+-------------
+
+.. autofunction:: geocode_structured
+
+.. autofunction:: geocode_unstructured
