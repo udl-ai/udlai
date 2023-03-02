@@ -29,8 +29,8 @@ Unit tests for UDL.AI Python API.
 """
 import os
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 import udlai
 
