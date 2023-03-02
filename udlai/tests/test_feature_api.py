@@ -37,7 +37,6 @@ from shapely.geometry import shape
 import udlai
 
 token = os.environ.get("TOKEN")
-token = "6a617a9a72f1babaeb0451950633a39974a77019"
 
 
 def test_attributes():
