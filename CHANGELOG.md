@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 (2023-06-15)
+
+Feature API can now query different resolutions of the data grid.
+
 ## 0.4.0 (2023-03-02)
 
 Added Geocoding API covering Switzerland.

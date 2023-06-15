@@ -174,7 +174,7 @@ def attribute_detail(token, attribute_id):
     _propagate_error(response)
 
 
-def features(token, latitude, longitude, attribute_id, index_by="id"):
+def features(token, latitude, longitude, attribute_id, index_by="id", grid_size=25):
     """
     An API Endpoint that will return the attributes for provided
     coordinates. The API expects the attribute IDs, that can be fetched using
@@ -197,6 +197,10 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
     index_by : {"id", "name"}
         One of the ``{"id", "name"}`` denoting whether the output should be indexed
         using the original attribute ID or its name
+    grid_size : {25, 75, 225, 675}
+        Resolution of the UDL grid to be queried. Smaller resolutions are more precise
+        but may contain gaps, larger resolutions are aggregated and are more likely to
+        cover entirety of built up area.
 
     Returns
     -------
@@ -261,6 +265,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
                 }
                 for x in attribute_id
             ],
+            "grid_size": f"grid{grid_size}",
         }
 
         # calling the API
@@ -273,7 +278,6 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             json=json_data,
         )
         if response.status_code == 200:
-
             dict_raw = response.json()
 
             if "error" in dict_raw:
@@ -307,6 +311,7 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
             }
             for x in attribute_id
         ],
+        "grid_size": f"grid{grid_size}",
     }
 
     response = requests.post(
@@ -319,7 +324,6 @@ def features(token, latitude, longitude, attribute_id, index_by="id"):
     )
 
     if response.status_code == 200:
-
         d = defaultdict(list)
         missing = False
         for pt in response.json()["results"]:

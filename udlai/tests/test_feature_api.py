@@ -106,6 +106,13 @@ class TestFeatures:
             assert c in r.columns
         assert r["net_betw_speed"].notna().sum() == 2
 
+    def test_grid_size(self):
+        r25 = udlai.features(token, 47.37, 8.54, [113, 172], index_by="name")
+        r675 = udlai.features(
+            token, 47.37, 8.54, [113, 172], index_by="name", grid_size=675
+        )
+        assert r25["net_betw_speed"] != r675["net_betw_speed"]
+
 
 class TestAggregate:
     def setup_method(self):
