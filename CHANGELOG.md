@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0 (2025-09-24)
+
+Added Geocoding V2 API version support.
+
 ## 0.5.0 (2023-06-15)
 
 Feature API can now query different resolutions of the data grid.
