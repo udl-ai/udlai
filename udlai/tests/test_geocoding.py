@@ -27,6 +27,7 @@ Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 Unit tests for UDL.AI Python API.
 
 """
+
 import os
 
 import numpy as np
@@ -47,10 +48,20 @@ def test_geocode_structured():
         }
     )
     r = udlai.geocode_structured(token, df)
-    assert r.shape == (2, 7)
+    assert r.shape == (2, 9)
     assert np.all(
         r.columns
-        == ["street", "number", "postcode", "town", "latitude", "longitude", "score"]
+        == [
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "status",
+            "error_message",
+        ]
     )
     assert not r.isna().any().any()
 
@@ -61,9 +72,77 @@ def test_geocode_unstructured():
         "Dorfstrasse 40, 3184 Wünnewil-Flamatt, Switzerland",
     ]
     r = udlai.geocode_unstructured(token, addresses)
-    assert r.shape == (2, 7)
+
+    assert r.shape == (2, 9)
     assert np.all(
         r.columns
-        == ["street", "number", "postcode", "town", "latitude", "longitude", "score"]
+        == [
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "status",
+            "error_message",
+        ]
     )
     assert not r.isna().any().any()
+
+
+def test_geocode_structured_v2():
+    df = pd.DataFrame(
+        {
+            "street": {0: "Bielstrasse", 1: "Quellenstrasse"},
+            "number": {0: "49", 1: "5"},
+            "postcode": {0: 3273, 1: 9240},
+            "town": {0: "Kappelen", 1: "Uzwil"},
+        }
+    )
+    r = udlai.geocode_structured_v2(token, df)
+    assert r.shape == (2, 10)
+    assert np.all(
+        r.columns
+        == [
+            "egaid",
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "matches",
+            "message",
+        ]
+    )
+    assert not r["latitude"].isna().any().any()
+    assert not r["longitude"].isna().any().any()
+
+
+def test_geocode_unstructured_v2():
+    addresses = [
+        "Klosbachstrasse 67, 8032 Zürich",
+        "Dorfstrasse 40, 3184 Wünnewil-Flamatt, Switzerland",
+    ]
+    r = udlai.geocode_unstructured_v2(token, addresses)
+
+    assert r.shape == (2, 10)
+    assert np.all(
+        r.columns
+        == [
+            "egaid",
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "matches",
+            "message",
+        ]
+    )
+    assert not r["latitude"].isna().any().any()
+    assert not r["longitude"].isna().any().any()

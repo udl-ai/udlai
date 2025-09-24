@@ -27,6 +27,7 @@ Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 Definition of the main API.
 
 """
+
 import warnings
 from collections import defaultdict
 

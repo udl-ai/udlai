@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: pre-commit/action@v2.0.0
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+      - uses: pre-commit/action@v3.0.1
 
   unittests:
     name: ${{ matrix.os }}, ${{ matrix.environment-file }}
@@ -32,10 +32,10 @@ jobs:
 
     steps:
       - name: checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
 
       - name: setup micromamba
-        uses: mamba-org/provision-with-micromamba@main
+        uses: mamba-org/setup-micromamba@v2.0.7
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: "latest"
@@ -57,7 +57,7 @@ jobs:
 
       - name: run tests - bash
         shell: powershell
-        run: pytest -v . --cov=udlai --cov-append --cov-report term-missing --cov-report xml --color=yes
+        run: pip3 install pytest pytest-cov shapely; pytest -v . --cov=udlai --cov-append --cov-report term-missing --cov-report xml --color=yes
         if: matrix.os == 'windows-latest'
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v5
