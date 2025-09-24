@@ -27,6 +27,7 @@ Contact: Martin Fleischmann <m.fleischmann@urbandatalab.net>, 2022
 Unit tests for UDL.AI Python API.
 
 """
+
 import os
 
 import numpy as np
@@ -50,7 +51,17 @@ def test_geocode_structured():
     assert r.shape == (2, 9)
     assert np.all(
         r.columns
-        == ["street", "number", "postcode", "town", "latitude", "longitude", "score", "status", "error_message"]
+        == [
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "status",
+            "error_message",
+        ]
     )
     assert not r.isna().any().any()
 
@@ -65,7 +76,17 @@ def test_geocode_unstructured():
     assert r.shape == (2, 9)
     assert np.all(
         r.columns
-        == ["street", "number", "postcode", "town", "latitude", "longitude", "score", "status", "error_message"]
+        == [
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "status",
+            "error_message",
+        ]
     )
     assert not r.isna().any().any()
 
@@ -83,8 +104,18 @@ def test_geocode_structured_v2():
     assert r.shape == (2, 10)
     assert np.all(
         r.columns
-        == ["egaid", "street", "number", "postcode", "town", "latitude",
-            "longitude", "score", "matches", "message"]
+        == [
+            "egaid",
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "matches",
+            "message",
+        ]
     )
     assert not r["latitude"].isna().any().any()
     assert not r["longitude"].isna().any().any()
@@ -100,9 +131,18 @@ def test_geocode_unstructured_v2():
     assert r.shape == (2, 10)
     assert np.all(
         r.columns
-        == ["egaid", "street", "number", "postcode", "town", "latitude",
-            "longitude", "score", "matches", "message"]
+        == [
+            "egaid",
+            "street",
+            "number",
+            "postcode",
+            "town",
+            "latitude",
+            "longitude",
+            "score",
+            "matches",
+            "message",
+        ]
     )
     assert not r["latitude"].isna().any().any()
     assert not r["longitude"].isna().any().any()
-
