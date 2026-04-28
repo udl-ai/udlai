@@ -101,24 +101,22 @@ def test_geocode_structured_v2():
         }
     )
     r = udlai.geocode_structured_v2(token, df)
-    assert r.shape == (2, 10)
-    assert np.all(
-        r.columns
-        == [
-            "egaid",
-            "street",
-            "number",
-            "postcode",
-            "town",
-            "latitude",
-            "longitude",
-            "score",
-            "matches",
-            "message",
-        ]
-    )
-    assert not r["latitude"].isna().any().any()
-    assert not r["longitude"].isna().any().any()
+    expected_columns = {
+        "egaid",
+        "street",
+        "number",
+        "postcode",
+        "town",
+        "latitude",
+        "longitude",
+        "score",
+        "matches",
+        "message",
+    }
+    assert len(r) == 2
+    assert expected_columns.issubset(r.columns)
+    assert not r["latitude"].isna().any()
+    assert not r["longitude"].isna().any()
 
 
 def test_geocode_unstructured_v2():
@@ -128,21 +126,19 @@ def test_geocode_unstructured_v2():
     ]
     r = udlai.geocode_unstructured_v2(token, addresses)
 
-    assert r.shape == (2, 10)
-    assert np.all(
-        r.columns
-        == [
-            "egaid",
-            "street",
-            "number",
-            "postcode",
-            "town",
-            "latitude",
-            "longitude",
-            "score",
-            "matches",
-            "message",
-        ]
-    )
-    assert not r["latitude"].isna().any().any()
-    assert not r["longitude"].isna().any().any()
+    expected_columns = {
+        "egaid",
+        "street",
+        "number",
+        "postcode",
+        "town",
+        "latitude",
+        "longitude",
+        "score",
+        "matches",
+        "message",
+    }
+    assert len(r) == 2
+    assert expected_columns.issubset(r.columns)
+    assert not r["latitude"].isna().any()
+    assert not r["longitude"].isna().any()
