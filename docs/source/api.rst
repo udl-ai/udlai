@@ -25,3 +25,7 @@ Geocoding API
 .. autofunction:: geocode_structured
 
 .. autofunction:: geocode_unstructured
+
+.. autofunction:: geocode_structured_v2
+
+.. autofunction:: geocode_unstructured_v2
